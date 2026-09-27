@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Deal {
+  id           String        @id @default(cuid())
+  companyName  String
+  contactName  String
+  stage        String
+  createdAt    DateTime      @default(now())
+  interactions Interaction[]
+}
+
+model Interaction {
+  id        String   @id @default(cuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id])
+  content   String
+  summary   String?
+  createdAt DateTime @default(now())
+}
