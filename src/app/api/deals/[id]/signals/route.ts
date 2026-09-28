@@ -1,12 +1,11 @@
-import { NextResponse } from "next/server";
-import { reflectSignals } from "@/lib/hindsight";
-import { structureSignals } from "@/lib/groq";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSignals } from "@/lib/deal-insights";
+import { getEvidence } from "@/lib/hindsight";
+import { invalidateDeal } from "@/lib/cache";
 
-// GET /api/deals/[id]/signals — Contradiction/drift detection
-// Uses the skeptical/literal signals bank for disposition-tuned reasoning
 export async function GET(
-  request: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: dealId } = await params;
@@ -15,57 +14,26 @@ export async function GET(
       where: { id: dealId },
       include: { _count: { select: { interactions: true } } },
     });
-    if (!deal) {
-      return NextResponse.json({ error: "Deal not found" }, { status: 404 });
-    }
+    if (!deal) return NextResponse.json({ error: "Deal not found" }, { status: 404 });
 
     if (deal._count.interactions < 2) {
       return NextResponse.json({
         signals: [],
         summary: "Need at least 2 interactions to detect drift patterns.",
         status: "insufficient-data",
+        evidence: [],
       });
     }
 
-    // Step 1: Reflect against the skeptical/literal signals bank
-    const driftPrompt = `Analyze all memories in this deal for contradictions, changed positions, or drift from earlier statements.
+    const fresh = new URL(req.url).searchParams.get("fresh") === "1";
+    if (fresh) invalidateDeal(dealId);
 
-Look specifically for:
-- Budget or pricing figures that changed between interactions
-- Stakeholders who appeared or disappeared from the conversation
-- Timeline or deadline shifts
-- Requirements that were stated initially but later dropped or changed
-- Decision criteria that evolved
-- Competitor mentions that appeared or changed
+    const [signalsResult, evidence] = await Promise.all([
+      getSignals(dealId),
+      getEvidence(dealId, "budget timeline stakeholders requirements changes"),
+    ]);
 
-For each signal found, note:
-1. What specifically changed
-2. When it was first mentioned (cite the date/interaction)
-3. What the current stated position is
-4. How risky this drift is for the deal
-
-If nothing contradictory is found, say so clearly.`;
-
-    const reflection = await reflectSignals(dealId, driftPrompt);
-
-    if (reflection?.text) {
-      // Step 2: Structure via Groq (reflect returns freeform text, not JSON)
-      const structured = await structureSignals(reflection.text);
-      return NextResponse.json({ ...structured, status: "analyzed" });
-    }
-
-    // Fallback: raw DB analysis via Groq
-    const interactions = await prisma.interaction.findMany({
-      where: { dealId },
-      orderBy: { createdAt: "asc" },
-    });
-
-    const rawContext = interactions
-      .map((i) => `[${i.createdAt.toISOString().split("T")[0]}] ${i.content}`)
-      .join("\n\n");
-
-    const structured = await structureSignals(`Interactions timeline:\n${rawContext}`);
-    return NextResponse.json({ ...structured, status: "analyzed-fallback" });
+    return NextResponse.json({ ...signalsResult, status: "analyzed", evidence });
   } catch (e) {
     console.error("Failed to detect drift signals:", e);
     return NextResponse.json({ error: "Failed to analyze signals" }, { status: 500 });

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { writeMemory, writeSignalsMemory, writePatternMemory } from "@/lib/hindsight";
 import { summarizeInteraction } from "@/lib/groq";
+import { invalidateDeal } from "@/lib/cache";
 
 // POST /api/deals/[id]/interactions — Log a new interaction
 export async function POST(
@@ -57,6 +58,9 @@ export async function POST(
       dealId,
       timestamp: now,
     }).catch(() => {});
+
+    // Invalidate cached insights so next fetch gets fresh data
+    invalidateDeal(dealId);
 
     return NextResponse.json({
       interaction,

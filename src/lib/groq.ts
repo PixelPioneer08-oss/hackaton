@@ -121,6 +121,14 @@ function parseJson(content: string): any {
   return JSON.parse(cleaned);
 }
 
+export async function chatJSON<T>(
+  messages: ChatMessage[],
+  options?: ChatOptions
+): Promise<T> {
+  const result = await chat(messages, options ?? { temperature: 0.2, max_tokens: 2048 });
+  return parseJson(result.content) as T;
+}
+
 export async function generateBrief(
   memoryContext: string
 ): Promise<{

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "npx tsx prisma/seed.ts",
+    "demo:spawn": "npx tsx scripts/spawn-demo-deal.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -19,7 +21,6 @@
     "sonner": "^2.0.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",

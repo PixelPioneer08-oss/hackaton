@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { RefreshCw, MapPin, AlertTriangle, Users, Lightbulb, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
+import { EvidenceList } from "./evidence-list";
 
 interface Brief {
   whereLeft: string;
   openObjections: string[];
   stakeholders: Array<{ name: string; role: string }>;
   suggestedTalkingPoints: string[];
+  evidence?: Array<{ text: string; date?: string }>;
 }
 
 export function PrecallBrief({ dealId }: { dealId: string }) {
@@ -151,6 +153,9 @@ export function PrecallBrief({ dealId }: { dealId: string }) {
             </ol>
           </div>
         )}
+
+        {/* Memory Evidence */}
+        <EvidenceList items={brief.evidence ?? []} />
       </div>
     </div>
   );

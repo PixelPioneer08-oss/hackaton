@@ -353,3 +353,20 @@ export async function getDealUnderstanding(
     return { building: false, hasData: false };
   }
 }
+
+export interface Evidence {
+  text: string;
+  date?: string;
+}
+
+export async function getEvidence(dealId: string, query: string, limit = 5): Promise<Evidence[]> {
+  const res = await queryMemory(dealId, query);
+  const items: any[] = (res as any)?.results ?? [];
+  return items
+    .slice(0, limit)
+    .map((r) => ({
+      text: r.text ?? r.content ?? "",
+      date: r.occurred_start ?? r.mentioned_at ?? r.timestamp ?? undefined,
+    }))
+    .filter((e) => e.text);
+}

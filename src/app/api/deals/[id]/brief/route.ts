@@ -1,23 +1,20 @@
-import { NextResponse } from "next/server";
-import { reflectMemory } from "@/lib/hindsight";
-import { generateBrief } from "@/lib/groq";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getBrief } from "@/lib/deal-insights";
+import { getEvidence } from "@/lib/hindsight";
+import { invalidateDeal } from "@/lib/cache";
 
-// GET /api/deals/[id]/brief — Generate pre-call brief
 export async function GET(
-  request: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: dealId } = await params;
   try {
-    // Verify deal exists
     const deal = await prisma.deal.findUnique({
       where: { id: dealId },
-      include: { interactions: { orderBy: { createdAt: "desc" }, take: 5 } },
+      include: { interactions: { orderBy: { createdAt: "desc" }, take: 1 } },
     });
-    if (!deal) {
-      return NextResponse.json({ error: "Deal not found" }, { status: 404 });
-    }
+    if (!deal) return NextResponse.json({ error: "Deal not found" }, { status: 404 });
 
     if (deal.interactions.length === 0) {
       return NextResponse.json({
@@ -25,42 +22,25 @@ export async function GET(
         openObjections: [],
         stakeholders: [],
         suggestedTalkingPoints: [
-          "Introduce yourself and DealBook's value proposition",
+          "Introduce yourself and the value proposition",
           "Ask about their current pain points",
           "Identify the key decision makers",
         ],
+        evidence: [],
       });
     }
 
-    // Step 1: Get memory context from Hindsight reflect
-    const reflectionPrompt = `Provide a comprehensive summary for a sales rep preparing for their next call with ${deal.contactName} at ${deal.companyName}. 
-Include: 
-1. Where the conversation last left off
-2. Any unresolved objections or concerns
-3. All stakeholders mentioned and their roles
-4. Key talking points and strategy for the next call
-Be specific — cite actual details from the interactions.`;
+    const fresh = new URL(req.url).searchParams.get("fresh") === "1";
+    if (fresh) invalidateDeal(dealId);
 
-    const reflection = await reflectMemory(dealId, reflectionPrompt);
+    const [brief, evidence] = await Promise.all([
+      getBrief(dealId),
+      getEvidence(dealId, "objections, stakeholders, and next steps"),
+    ]);
 
-    if (reflection?.text) {
-      // Step 2: Structure via Groq
-      const brief = await generateBrief(reflection.text);
-      return NextResponse.json(brief);
-    }
-
-    // Fallback: Use raw interaction data if Hindsight is unavailable
-    const recentNotes = deal.interactions
-      .map((i) => `[${i.createdAt.toISOString().split("T")[0]}] ${i.content}`)
-      .join("\n\n");
-
-    const brief = await generateBrief(recentNotes);
-    return NextResponse.json(brief);
+    return NextResponse.json({ ...brief, evidence });
   } catch (e) {
     console.error("Failed to generate brief:", e);
-    return NextResponse.json(
-      { error: "Failed to generate brief" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to generate brief" }, { status: 500 });
   }
 }
