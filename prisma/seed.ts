@@ -143,7 +143,7 @@ const FERRO_INTERACTIONS = [
 ];
 
 async function main() {
-  console.log("🧠 DealMind Seed Script");
+  console.log("🧠 DealBook Seed Script");
   console.log("======================\n");
 
   // Clear existing data
@@ -276,7 +276,7 @@ async function main() {
     console.log("  Prisma data is intact. Hindsight can be seeded separately.\n");
   }
 
-  console.log("\n🎉 Seed complete! Run `npm run dev` to start DealMind.\n");
+  console.log("\n🎉 Seed complete! Run `npm run dev` to start DealBook.\n");
 }
 
 main()

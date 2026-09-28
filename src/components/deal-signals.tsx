@@ -65,31 +65,33 @@ export function DealSignals({ dealId }: { dealId: string }) {
   }
 
   return (
-    <div className="glass-card p-5">
-      <div className="flex items-center justify-between mb-3">
+    <div className="glass-card p-5 space-y-3">
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-dm-amber" />
-          <h3 className="text-sm font-semibold text-dm-text">Drift Signals</h3>
+          <h3 className="text-sm font-semibold text-dm-text">Drift Signals & Risks</h3>
         </div>
-        <span className="text-xs text-dm-muted">{data.summary}</span>
+        <span className="text-xs text-dm-muted font-mono">{data.summary}</span>
       </div>
-      <div className="space-y-2">
+
+      {/* Internal Scroller Box */}
+      <div className="max-h-[440px] overflow-y-auto custom-scrollbar pr-1 space-y-2.5">
         {signals.map((signal: any, i: number) => {
           const colors = RISK_COLORS[signal.risk] || RISK_COLORS.low;
           return (
             <div key={i} className={`p-3 rounded-xl border ${colors.border} ${colors.bg}`}>
               <div className="flex items-center justify-between mb-1">
-                <span className={`text-xs font-medium ${colors.text} uppercase tracking-wider`}>
+                <span className={`text-[11px] font-bold ${colors.text} uppercase tracking-wider`}>
                   {signal.type?.replace(/_/g, " ") || "DRIFT"}
                 </span>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
+                <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
                   {signal.risk || "low"}
                 </span>
               </div>
-              <p className="text-sm text-dm-text">{signal.description}</p>
-              <div className="flex items-center gap-3 mt-2 text-xs text-dm-muted font-mono">
+              <p className="text-xs sm:text-sm text-dm-text font-medium leading-relaxed">{signal.description}</p>
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-dm-muted font-mono bg-black/20 p-2 rounded-lg">
                 <span>Then: {signal.firstMention}</span>
-                <TrendingDown className="w-3 h-3" />
+                <TrendingDown className="w-3 h-3 text-dm-amber shrink-0" />
                 <span>Now: {signal.currentState}</span>
               </div>
             </div>

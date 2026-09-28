@@ -134,7 +134,7 @@ export async function generateBrief(
       [
         {
           role: "system",
-          content: `You are DealMind, an AI sales assistant. Based on the memory context provided, generate a pre-call brief.
+          content: `You are DealBook, an AI sales assistant. Based on the memory context provided, generate a pre-call brief.
 
 Return ONLY a JSON object with exactly these fields:
 {
@@ -309,7 +309,7 @@ export async function answerQuestion(
       [
         {
           role: "system",
-          content: `You are DealMind, an AI sales assistant with perfect memory of all deal interactions. 
+          content: `You are DealBook, an AI sales assistant with perfect memory of all deal interactions. 
 Answer the user's question based ONLY on the memory context provided. 
 Be specific, cite dates and names when available. 
 If the memory doesn't contain relevant information, say so honestly.
@@ -329,3 +329,49 @@ Keep answers concise but thorough (2-4 sentences).`,
     return `Based on the deal memory notes: ${memoryContext.substring(0, 200)}...`;
   }
 }
+
+export async function generateEmailDraft(
+  companyName: string,
+  contactName: string,
+  memoryContext: string
+): Promise<{
+  subject: string;
+  body: string;
+  keyPointsAddressed: string[];
+}> {
+  try {
+    const result = await chat(
+      [
+        {
+          role: "system",
+          content: `You are DealBook, an elite B2B sales AI assistant. Generate a highly personalized, professional follow-up email draft to send to a prospect after recent calls.
+
+Return ONLY a JSON object with exactly these fields:
+{
+  "subject": "Compelling email subject line",
+  "body": "Professional email body text with appropriate line breaks",
+  "keyPointsAddressed": ["List of 2-3 key takeaways or action items included in the email"]
+}`,
+        },
+        {
+          role: "user",
+          content: `Company: ${companyName}\nContact: ${contactName}\nMemory Context:\n${memoryContext}`,
+        },
+      ],
+      { temperature: 0.5, max_tokens: 1000 }
+    );
+    return parseJson(result.content);
+  } catch (e) {
+    console.warn("Groq generateEmailDraft fallback:", e);
+    return {
+      subject: `Following up on our recent discussion — ${companyName}`,
+      body: `Hi ${contactName.split(" ")[0]},\n\nThank you for taking the time to speak with us recently regarding ${companyName}'s current initiatives.\n\nBased on our conversation, I wanted to confirm our next steps and ensure we have addressed all your key requirements.\n\nPlease let me know if you have any questions or if you would like to schedule a quick follow-up call next week.\n\nBest regards,\nSales Team`,
+      keyPointsAddressed: [
+        "Reconfirmed agreement on next steps",
+        "Addressed key requirements discussed in recent call",
+        "Offered follow-up meeting schedule",
+      ],
+    };
+  }
+}
+

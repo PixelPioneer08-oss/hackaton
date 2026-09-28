@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { DealCard } from "@/components/deal-card";
-import { Brain, Plus, Sparkles, TrendingUp, Shield } from "lucide-react";
+import { Brain, Plus, Sparkles, Briefcase, Trophy } from "lucide-react";
 
 interface Deal {
   id: string;
@@ -28,66 +28,68 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <div className="max-w-[1550px] w-full mx-auto px-6 sm:px-8 pt-4 pb-12">
       {/* Hero Section */}
       <div className="mb-10 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-dm-indigo/10 border border-dm-indigo/20 text-dm-indigo text-xs sm:text-sm font-medium mb-4">
           <Brain className="w-4 h-4" />
           AI-Powered Sales Memory
         </div>
-        <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
           Brief yourself in{" "}
           <span className="bg-gradient-to-r from-dm-indigo via-indigo-400 to-purple-400 bg-clip-text text-transparent">
             10 seconds
           </span>{" "}
           before every call
         </h1>
-        <p className="text-dm-muted text-base sm:text-lg max-w-2xl mx-auto">
-          DealMind remembers every interaction, objection, and competitor mention across your deals.
+        <p className="text-dm-muted text-sm sm:text-base max-w-xl mx-auto">
+          DealBook remembers every interaction, objection, and competitor mention across your deals.
         </p>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-10">
-        <div className="glass-card p-5 flex items-center gap-4 glow-indigo-hover">
-          <div className="p-3 rounded-xl bg-dm-indigo/10 border border-dm-indigo/20">
-            <TrendingUp className="w-6 h-6 text-dm-indigo" />
+      {/* Upper Stats Row (Compact Size) */}
+      <div className="max-w-4xl mx-auto mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="glass-card p-3.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-dm-indigo/10 border border-dm-indigo/20 shrink-0">
+              <Briefcase className="w-4 h-4 text-dm-indigo" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-dm-text leading-none">{deals.length}</p>
+              <p className="text-xs text-dm-muted mt-1">Active Deals</p>
+            </div>
           </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-bold text-dm-text">{deals.length}</p>
-            <p className="text-xs sm:text-sm text-dm-muted">Active Deals</p>
+          <div className="glass-card p-3.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-dm-green/10 border border-dm-green/20 shrink-0">
+              <Brain className="w-4 h-4 text-dm-green" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-dm-text leading-none">
+                {deals.reduce((sum, d) => sum + d.interactionCount, 0)}
+              </p>
+              <p className="text-xs text-dm-muted mt-1">Memories Stored</p>
+            </div>
           </div>
-        </div>
-        <div className="glass-card p-5 flex items-center gap-4 glow-indigo-hover">
-          <div className="p-3 rounded-xl bg-dm-green/10 border border-dm-green/20">
-            <Sparkles className="w-6 h-6 text-dm-green" />
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-bold text-dm-text">
-              {deals.reduce((sum, d) => sum + d.interactionCount, 0)}
-            </p>
-            <p className="text-xs sm:text-sm text-dm-muted">Memories Stored</p>
-          </div>
-        </div>
-        <div className="glass-card p-5 flex items-center gap-4 glow-indigo-hover">
-          <div className="p-3 rounded-xl bg-dm-amber/10 border border-dm-amber/20">
-            <Shield className="w-6 h-6 text-dm-amber" />
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-bold text-dm-text">
-              {deals.filter((d) => d.stage === "Closed-Won").length}
-            </p>
-            <p className="text-xs sm:text-sm text-dm-muted">Deals Won</p>
+          <div className="glass-card p-3.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-dm-amber/10 border border-dm-amber/20 shrink-0">
+              <Trophy className="w-4 h-4 text-dm-amber" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-dm-text leading-none">
+                {deals.filter((d) => d.stage === "Closed-Won").length}
+              </p>
+              <p className="text-xs text-dm-muted mt-1">Deals Won</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Deals Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-dm-text tracking-tight">Your Deals</h2>
+      <div className="relative flex items-center justify-center mb-8">
+        <h2 className="text-2xl font-bold text-white tracking-tight text-center">Your Deals</h2>
         <Link
           href="/deals/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-dm-indigo hover:bg-dm-indigo-hover text-white transition-all duration-200 shadow-lg shadow-dm-indigo/25"
+          className="absolute right-0 hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-dm-indigo hover:bg-dm-indigo-hover text-white transition-all duration-200 shadow-lg shadow-dm-indigo/25"
         >
           <Plus className="w-4 h-4" />
           New Deal
@@ -126,7 +128,7 @@ export default function Dashboard() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {deals.map((deal) => (
             <DealCard key={deal.id} {...deal} />
           ))}

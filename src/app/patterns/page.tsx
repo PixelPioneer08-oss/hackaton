@@ -68,7 +68,7 @@ export default function PatternsPage() {
           </h3>
           <p className="text-sm text-dm-muted max-w-md mx-auto">
             Log more interactions across multiple deals to start building
-            cross-deal objection intelligence. DealMind learns which
+            cross-deal objection intelligence. DealBook learns which
             objection-handling approaches work best over time.
           </p>
         </div>

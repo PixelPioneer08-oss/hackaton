@@ -47,7 +47,7 @@ export function DealUnderstanding({ dealId, interactionCount }: { dealId: string
           <h3 className="text-sm font-semibold text-dm-text">Deal Understanding</h3>
         </div>
         <p className="text-sm text-dm-muted">
-          Log your first interaction to start building DealMind&apos;s understanding of this deal.
+          Log your first interaction to start building DealBook&apos;s understanding of this deal.
         </p>
       </div>
     );
@@ -74,24 +74,28 @@ export function DealUnderstanding({ dealId, interactionCount }: { dealId: string
 
   // State 3: Ready
   return (
-    <div className="glass-card p-5">
-      <div className="flex items-center justify-between mb-3">
+    <div className="glass-card p-5 space-y-3">
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-dm-indigo" />
-          <h3 className="text-sm font-semibold text-dm-text">Deal Understanding</h3>
+          <h3 className="text-sm font-semibold text-dm-text">Prospect Profile & Mental Model</h3>
         </div>
         {data?.isStale && (
           <span className="text-xs text-dm-amber">Refreshing…</span>
         )}
       </div>
-      <p className="text-sm text-dm-muted leading-relaxed whitespace-pre-line">
-        {data.content}
-      </p>
-      {data.lastUpdated && (
-        <p className="text-xs text-dm-muted/50 font-mono mt-3">
-          Updated {new Date(data.lastUpdated).toLocaleDateString()}
+
+      {/* Internal Scroller Box */}
+      <div className="max-h-[440px] overflow-y-auto custom-scrollbar pr-1.5 space-y-3">
+        <p className="text-xs sm:text-sm text-dm-muted leading-relaxed whitespace-pre-line">
+          {data.content}
         </p>
-      )}
+        {data.lastUpdated && (
+          <p className="text-[11px] text-dm-muted/50 font-mono">
+            Updated {new Date(data.lastUpdated).toLocaleDateString()}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

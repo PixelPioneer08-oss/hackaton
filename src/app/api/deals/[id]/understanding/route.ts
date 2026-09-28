@@ -56,7 +56,7 @@ export async function GET(
     return NextResponse.json({
       status: "building",
       content: null,
-      message: "DealMind is building its understanding of this deal...",
+      message: "DealBook is building its understanding of this deal...",
     });
   } catch (e) {
     console.error("Failed to get deal understanding:", e);

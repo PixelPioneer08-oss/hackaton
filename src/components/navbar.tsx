@@ -17,12 +17,12 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-dm-bg/85 backdrop-blur-xl">
       <div className="max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="p-1.5 rounded-lg bg-dm-indigo/20 group-hover:bg-dm-indigo/30 transition-colors">
-            <Brain className="w-5 h-5 text-dm-indigo" />
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="p-2 rounded-xl bg-dm-indigo/20 group-hover:bg-dm-indigo/30 transition-colors">
+            <Brain className="w-7 h-7 text-dm-indigo" />
           </div>
-          <span className="text-lg font-bold bg-gradient-to-r from-dm-text to-dm-indigo bg-clip-text text-transparent">
-            DealMind
+          <span className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-dm-text to-dm-indigo bg-clip-text text-transparent tracking-tight">
+            DealBook
           </span>
         </Link>
 

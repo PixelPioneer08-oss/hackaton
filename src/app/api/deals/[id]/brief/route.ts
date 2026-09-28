@@ -25,7 +25,7 @@ export async function GET(
         openObjections: [],
         stakeholders: [],
         suggestedTalkingPoints: [
-          "Introduce yourself and DealMind's value proposition",
+          "Introduce yourself and DealBook's value proposition",
           "Ask about their current pain points",
           "Identify the key decision makers",
         ],

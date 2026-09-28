@@ -12,24 +12,23 @@ interface Interaction {
 export function InteractionTimeline({ interactions }: { interactions: Interaction[] }) {
   if (interactions.length === 0) {
     return (
-      <div className="text-center py-12 text-dm-muted">
-        <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-50" />
-        <p className="text-sm">No interactions logged yet.</p>
-        <p className="text-xs mt-1">Log your first call to start building memory.</p>
+      <div className="glass-card p-8 text-center text-dm-muted">
+        <MessageSquare className="w-8 h-8 mx-auto mb-3 text-dm-indigo opacity-60" />
+        <p className="text-sm font-semibold text-white">No call notes logged yet</p>
+        <p className="text-xs text-dm-muted mt-1">Log your first call to start building AI sales memory.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="max-h-[440px] overflow-y-auto custom-scrollbar pr-1 space-y-3">
       {interactions.map((interaction, index) => (
         <div
           key={interaction.id}
-          className="glass-card p-4 animate-fade-in"
-          style={{ animationDelay: `${index * 50}ms` }}
+          className="glass-card p-4 hover:border-dm-indigo/30 transition-all duration-200"
         >
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-mono text-xs text-dm-muted">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-mono text-[11px] text-dm-indigo bg-dm-indigo/10 border border-dm-indigo/20 px-2 py-0.5 rounded-full font-semibold">
               {new Date(interaction.createdAt).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -38,11 +37,11 @@ export function InteractionTimeline({ interactions }: { interactions: Interactio
             </span>
           </div>
           {interaction.summary && (
-            <p className="text-sm font-medium text-dm-indigo mb-2">
+            <p className="text-sm font-bold text-white mb-1.5 leading-snug">
               {interaction.summary}
             </p>
           )}
-          <p className="text-sm text-dm-muted leading-relaxed line-clamp-3">
+          <p className="text-xs text-dm-text/90 leading-relaxed font-sans">
             {interaction.content}
           </p>
         </div>

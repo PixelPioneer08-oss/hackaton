@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export const metadata: Metadata = {
-  title: "DealMind — AI Sales Call Memory",
-  description: "Brief yourself in 10 seconds before every call. DealMind remembers every interaction, objection, and competitor mention.",
+  title: "DealBook — AI Sales Call Memory",
+  description: "Brief yourself in 10 seconds before every call. DealBook remembers every interaction, objection, and competitor mention.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
